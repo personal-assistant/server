@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
     createToken(objectData){
-       return jwt.sign(objectData, process.env.JWT_TOKEN_SECRET, {expiresIn: '5h'})
+       return jwt.sign(objectData, process.env.JWT_TOKEN_SECRET)
     },
     decodeToken(token){
         if(!token){

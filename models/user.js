@@ -21,16 +21,28 @@ var userSchema = new Schema({
     },
     expoNotificationToken : [{
         type: String,
-    }]
+        required: true
+    }],
+    relationshipPoint :{
+        type: Number
+    }
 
-})
+}, { versionKey: false })
 userSchema.pre('save', function(next){
     this.password = encryption.getHashedPassword(this.password)
+    if(!this.relationshipPoint){
+        this.relationshipPoint = 0;
+    }
     next()
 })
 userSchema.path('email').validate(async (value) => {
-    let user =  await mongoose.models.User.findOne({email:value});
-    return !user;
+    try{
+        let user =  await mongoose.models.User.findOne({email:value});
+        return !user;
+    }catch(err){
+        console.log(err)
+    }
+  
 }, 'Email already exists');
 
 const User = mongoose.model('User', userSchema)
