@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const tokenHelper = require('../helpers/tokenHandler')
 const encryption = require('../helpers/encryption')
+
 class UserController{
 
     static login(req,res,next){

@@ -5,9 +5,10 @@ var jwtError = ['TokenExpiredError','JsonWebTokenError','NotBeforeError']
 
 function nodeErrorMessage(message){
     switch(message){
+        
+        case 'Not Authorized': return 403;
         case 'User not found':
-            return 403;
-        case 'Not Authorized':{
+        case 'Token is undefined':{
             return 401;
         }
         case 'Token is undefined':

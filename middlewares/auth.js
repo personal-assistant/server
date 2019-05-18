@@ -20,7 +20,5 @@ module.exports = {
         }
        
     },
-    authorization : function(req,res,next){  
-    }
 
 }
