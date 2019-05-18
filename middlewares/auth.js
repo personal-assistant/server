@@ -8,8 +8,9 @@ module.exports = {
             User.findOne({_id:user._id})
             .then(result=>{
                 if(result){
-                    req.body.user = result;
-                    req.params.user = result;                    
+                    req.user = result
+                    // req.body.user = result;
+                    // req.params.user = result;                    
                     next()
                 }else{
                     throw new Error('User not found')
@@ -19,8 +20,5 @@ module.exports = {
             next(err)
         }
        
-    },
-    authorization : function(req,res,next){  
     }
-
 }

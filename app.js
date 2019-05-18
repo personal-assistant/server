@@ -4,40 +4,16 @@ const mongoose = require('mongoose');
 const errorHandler = require('./middlewares/errorHandler')
 const app = express();
 const cors = require('cors')
-const PORT = process.env.PORT || 3000
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const CronJob = require('cron').CronJob;
-const axios = require('axios')
+const PORT = process.env.PORT
+const NODE_ENV = process.env.NODE_ENV;
+const databaseConnect = require("./helpers/databaseConnect")
+
 
 app.use(cors())
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
-mongoose.connect(`mongodb+srv://${process.env.ATLAS_USER}:${process.env.ATLAS_PASSWORD}@cluster0-xigat.gcp.mongodb.net/eve${NODE_ENV}?retryWrites=true`, {useNewUrlParser:true})
-.then(function(success){
-    console.log('succesfully connect to database')
-})
-.catch(function(err){
-    console.log(err)
-})
-
-const title = 'Example title'
-const body = 'Example body'
-let pushMessage = JSON.stringify({
-  to: 'ExponentPushToken[Y0Gq7BPC-vKGmgYQdKb-h9]',
-  title: title,
-  body: body,
-  data: { message: `${title} - ${body}` },
-})
-
-// new CronJob('0 8 * * *', function() {
-//   console.log('You will see this message every 8 am');
-//   axios.post('https://exp.host/--/api/v2/push/send', pushMessage, {
-//     headers: {
-//       'Content-Type': 'application/json'
-//     }
-//   })
-// }, null, true, 'Asia/Jakarta');
+databaseConnect(mongoose, process.env.ATLAS_USER, process.env.ATLAS_PASSWORD, NODE_ENV)
 
 app.use('/', require('./routes'));
 app.use(errorHandler);
