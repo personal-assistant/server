@@ -5,7 +5,7 @@ const chai      = require('chai'),
 
 chai.use(chaiHttp)
 
-describe('Movie Test', function() {
+describe('Action Test', function() {
   it('should return now playing movies with status code 200', function(done) {
     chai
       .request(app)

@@ -28,6 +28,7 @@ var userSchema = new Schema({
     }
 
 }, { versionKey: false })
+
 userSchema.pre('save', function(next){
     this.password = encryption.getHashedPassword(this.password)
     if(!this.relationshipPoint){

@@ -4,7 +4,6 @@ const encryption = require('../helpers/encryption')
 class UserController{
 
     static login(req,res,next){
-
         let token =""
         User.findOne({email: req.body.email})
         .then(result=>{
@@ -34,6 +33,7 @@ class UserController{
             next(err);
         })
     }
+
     static register(req,res,next){
         let body = {
             name: req.body.name,
@@ -54,6 +54,19 @@ class UserController{
         .catch(err=>{
             next(err)
         })
+    }
+    static updatePoint(req,res,next){
+        if(!req.body.relationshipPoint){
+            next()
+        }else{
+            User.findByIdAndUpdate(req.user._id, {relationshipPoint: req.user.relationshipPoint + req.body.relationshipPoint}, {new:true})
+            .then(result=>{
+                next()
+            })
+            .catch(err=>{
+                next(err)
+            })
+        }
     }
 }
 
