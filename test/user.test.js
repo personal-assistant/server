@@ -2,21 +2,45 @@ const chai = require("chai");
 const chaiHttp = require('chai-http');
 const expect = chai.expect;
 const app = require('../app');
-const userDrop = require("./testhelper/userDrop")
+const User = require("../models/user")
 
 chai.use(chaiHttp);
-
-before(function(done) {
-    userDrop(done)
-});
-  
-after(function(done) {
-    userDrop(done);
-});
-
 var token;
 
 describe("User tests", function () {
+    this.timeout(5000);
+    before(function(done) {
+        User
+          .deleteMany({
+              _id:{
+                  $nin: ["5cde8a90d3f5935b75012395" ]
+              }
+          })
+          .then(function() {
+            console.log('UDAH')
+            done();
+          })
+          .catch(function(err) {
+            console.log(err)
+            done(err)
+          });
+    });
+      
+    after(function(done) {
+        User
+          .deleteMany({
+              _id:{
+                  $nin: ["5cde8a90d3f5935b75012395" ]
+              }
+          })
+          .then(function() {
+            done();
+          })
+          .catch(function(err) {
+            console.log(err)
+            done(err)
+          });
+    });
     describe(" POST /users/register", function () {
         it("should success register user with status 201 with no error", function (done) {
             let user = {
@@ -25,10 +49,11 @@ describe("User tests", function () {
                 password: "12345",
                 expoNotificationToken: "dummyToken"
             };
-
+   
             chai
             .request(app)
             .post("/users/register")
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send(user)
             .end(function (err, res) {
                 expect(err).to.be.null;
@@ -39,22 +64,24 @@ describe("User tests", function () {
                 expect(res.body).to.have.keys(['token','user']);
                 expect(res.body.user).to.have.keys(['_id','name', "email", "password", "expoNotificationToken", "relationshipPoint"]);
                 done()
-            });
+            })
         });
         it("should error with error code 400", function(done){
             let errorUser ={}
             chai
             .request(app)
             .post("/users/register")
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send(errorUser)
             .end(function(err, res){
-                console.log(JSON.stringify(res.body,null,3))
+        
                 expect(err).to.be.null;
                 expect(res).to.have.status(400)
                 expect(res.body).to.have.all.keys('error','message',"source","statusCode");
                 expect(res.body.message).to.include('validation')
                 done()
             })
+      
         })
     });
 
@@ -67,6 +94,7 @@ describe("User tests", function () {
             chai
             .request(app)
             .post("/users/login")
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send(user)
             .end(function(err,res){
                 expect(err).to.be.null;
@@ -77,6 +105,8 @@ describe("User tests", function () {
                 token = res.body.token
                 done();
             })
+            
+          
         })
         it("Login Failed: wrong email with status 400", function(done){
             let user = {
@@ -86,9 +116,9 @@ describe("User tests", function () {
             chai
             .request(app)
             .post("/users/login")
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send(user)
-            .end(function(err,res){
-                 console.log(JSON.stringify(res.body,null,3))
+            .end(function(err,res){ 
                 expect(err).to.be.null;
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.an("object")
@@ -96,18 +126,19 @@ describe("User tests", function () {
                 expect(res.body).to.have.all.keys('error','message',"source","statusCode");
                 done();
             })
+     
         })
         it("Login Failed: wrong password with status 400", function(done){
             let user = {
-                "email": "test@email.com",
+                "email": "coba@email.com",
                 "password": "pas",
             }
             chai
             .request(app)
             .post("/users/login")
+            .set('content-type', 'application/x-www-form-urlencoded')
             .send(user)
             .end(function(err,res){
-                 console.log(JSON.stringify(res.body,null,3))
                 expect(err).to.be.null;
                 expect(res).to.have.status(400);
                 expect(res.body).to.be.an("object")
@@ -116,53 +147,43 @@ describe("User tests", function () {
                 done();
             })
         })
+        //soon to be delete and replace with real backend
+        it("successfully post message", function(){
+
+            let message = {
+                code: "food",
+                relationshipPoint : 0,
+                payload : {}
+            }
+
+            chai
+            .request(app)
+            .post("/messages")
+            .set({authorization: token})
+            .send(message)
+            .end(function(err,res){
+                expect(err).to.be.null;
+                expect(res).to.have.status(200);
+                expect(res.body).to.be.an("object")
+                expect(res.body.message).to.equal("success")
+            })
+        })
+        it("should get 401 passing data without token", function(){
+            let message = {
+                code: "food",
+                relationshipPoint : 0,
+                payload : {}
+            }
+            chai
+            .request(app)
+            .post("/messages")
+            .send(message)
+            .end(function(err,res){
+                expect(err).to.be.null;
+                expect(res).to.have.status(401);
+            })
+        })
+
     });
-    // describe("POST /users/logout", function(){
-    //     it("Success Logout", function(done){
-    //         chai
-    //         .request(app)
-    //         .post("/users/logout")
-    //         .set({authorization: token})
-    //         .end(function(err,res){
-    //              console.log(JSON.stringify(res.body,null,3))
-    //             expect(err).to.be.null;
-    //             expect(res).to.have.status(200);
-    //             expect(res.body).to.be.an("object")
-    //             expect(res.body.message).to.equal("Successfully logout");
-    //             expect(res.body).to.have.all.keys("message","accountType")
-    //             done();
-    //         })
-    //     })
-    //     it("Logout Failed: not authenticated status 403", function(done){
-    //         chai
-    //         .request(app)
-    //         .post("/users/logout")
-    //         .end(function(err,res){
-    //              console.log(JSON.stringify(res.body,null,3))
-    //             expect(err).to.be.null;
-    //             expect(res).to.have.status(403);
-    //             expect(res.body).to.be.an("object")
-    //             expect(res.body.message).to.equal("Token is undefined")
-    //             expect(res.body).to.have.all.keys('error','message',"source","statusCode");
-    //             done();
-    //         })
-    //     })
-    // })
-    // describe("GET /users/profile", function(){
-    //     it("Get Profile with status 200", function(done){
-    //         chai
-    //         .request(app)
-    //         .get("/users/profile")
-    //         .set({authorization:token})
-    //         .end(function(err,res){
-    //              console.log(JSON.stringify(res.body,null,3))
-    //             expect(err).to.be.null;
-    //             expect(res).to.have.status(200)
-    //             expect(res.body).to.be.an("object")
-    //             expect(res.body).to.have.all.keys("imageUrl", "accountType","name","hackpay","role")
-    //             done()
-    //         })
-    //     })
-    // })
    
 });

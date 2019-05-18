@@ -4,8 +4,9 @@ const mongoose = require('mongoose');
 const errorHandler = require('./middlewares/errorHandler')
 const app = express();
 const cors = require('cors')
-const PORT = process.env.PORT || 3000
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const PORT = process.env.PORT
+const NODE_ENV = process.env.NODE_ENV;
+const databaseConnect = require("./helpers/databaseConnect")
 const CronJob = require('cron').CronJob;
 const axios = require('axios')
 
@@ -13,14 +14,8 @@ app.use(cors())
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
-mongoose.connect(`mongodb+srv://${process.env.ATLAS_USER}:${process.env.ATLAS_PASSWORD}@cluster0-xigat.gcp.mongodb.net/eve${NODE_ENV}?retryWrites=true`, {useNewUrlParser:true})
-.then(function(success){
-    console.log('succesfully connect to database')
-})
-.catch(function(err){
-    console.log(err)
-})
-
+databaseConnect(mongoose, process.env.ATLAS_USER, process.env.ATLAS_PASSWORD, NODE_ENV)
+    
 const title = 'Example title'
 const body = 'Example body'
 let pushMessage = JSON.stringify({
