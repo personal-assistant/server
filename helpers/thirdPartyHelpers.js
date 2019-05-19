@@ -7,8 +7,18 @@ const client = new vision.ImageAnnotatorClient({
 
 function thirdPartyHelper(code, location, photoUrl){
     switch(code){
-        case "food": { 
-            let url =  `https://developers.zomato.com/api/v2.1/geocode?lat=${location && location.lat || -6.260697}&lon=${location && location.long || 106.781616}`
+        case "food": {
+
+            let url, lat, long;
+            if(location === undefined){
+                lat = -6.260697
+                long =  106.781616
+            }else{    
+                lat = location.lat || -6.260698
+                long = location.long ||  106.781617
+            } 
+
+            url =  `https://developers.zomato.com/api/v2.1/geocode?lat=${lat}&lon=${long}`
             let headers = {
                 'user-key': 'd7f449d4fba3514b665a38fd94abadcf'
             }

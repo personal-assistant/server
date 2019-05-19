@@ -8,13 +8,14 @@ module.exports = {
             User.findOne({_id:user._id})
             .then(result=>{
                 if(result){
-                    req.user = result
-                    // req.body.user = result;
-                    // req.params.user = result;                    
+                    req.user = result                   
                     next()
                 }else{
                     throw new Error('User not found')
                 }
+            })
+            .catch(err=>{
+                next(err)
             })
         }catch(err){
             next(err)

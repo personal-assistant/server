@@ -10,7 +10,7 @@ const databaseConnect = require("./helpers/databaseConnect")
 
 
 app.use(cors())
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
 databaseConnect(mongoose, process.env.ATLAS_USER, process.env.ATLAS_PASSWORD, NODE_ENV)

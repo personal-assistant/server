@@ -7,14 +7,12 @@ function nodeErrorMessage(message){
     switch(message){
         case 'User not found':
             return 403;
-        case 'Not Authorized':{
-            return 401;
-        }
         case 'Token is undefined':
         case 'Email is Invalid!':
         case 'Password is Invalid!':
         case 'Item id not found':
         case 'Item not found':
+        case 'Code is invalid':
             return 400;
         default :{
             return 500;
@@ -43,7 +41,8 @@ module.exports = function(errorObject){
         returnObj.message = 'Error from server'
     }else if(mongooseErrorFromClient.includes(errorObject.name)){
         returnObj.source = 'database';
-        errorObject.message ? returnObj.message = errorObject.message : returnObj.message = 'Bad Request'
+        //errorObject.message ? returnObj.message = errorObject.message : returnObj.message = 'Bad Request'
+         returnObj.message = errorObject.message
         statusCode = 400;
     }else{
         returnObj.source = 'unknown error';

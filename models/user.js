@@ -24,25 +24,25 @@ var userSchema = new Schema({
         required: true
     }],
     relationshipPoint :{
-        type: Number
+        type: Number,
     }
 
 }, { versionKey: false })
 
 userSchema.pre('save', function(next){
+    // console.log("masuk presave")
     this.password = encryption.getHashedPassword(this.password)
-    if(!this.relationshipPoint){
-        this.relationshipPoint = 0;
-    }
+    this.relationshipPoint = 0
     next()
 })
 userSchema.path('email').validate(async (value) => {
-    try{
+    // console.log("masuk path email")
+    // try{
         let user =  await mongoose.models.User.findOne({email:value});
         return !user;
-    }catch(err){
-        console.log(err)
-    }
+    // }catch(err){
+    //     console.log(err)
+    // }
   
 }, 'Email already exists');
 

@@ -41,7 +41,6 @@ class UserController{
             password: req.body.password,
             expoNotificationToken: [req.body.expoNotificationToken]
         }
-
         User.create(body)
         .then(result=>{
             let token = tokenHelper.createToken({
@@ -61,6 +60,7 @@ class UserController{
         }else{
             User.findByIdAndUpdate(req.user._id, {relationshipPoint: req.user.relationshipPoint + req.body.relationshipPoint}, {new:true})
             .then(result=>{
+                req.body.relationshipPoint = req.user.relationshipPoint + req.body.relationshipPoint
                 next()
             })
             .catch(err=>{
@@ -75,7 +75,6 @@ function composeReturn(token,result){
     return {
         token:token,
         user: result
-
     }  
 }
 module.exports = UserController;
