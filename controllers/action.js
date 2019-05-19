@@ -17,15 +17,13 @@ class MessageController {
                         }
                         filteredData.push(dataObj)
                     });
-                    res.status(200).json(composeMessage(filteredData))
+                    res.status(200).json(composeMessage(filteredData, code))
                 })
                 .catch(err=>{
                     next(err)
                 })
                 break;
             case "food": {
-                // console.log(code)
-                // console.log(req.body.payload);
                 
                 thirdPartyHelper(code, req.body.payload)
                 .then(data=>{
@@ -36,11 +34,11 @@ class MessageController {
                             id: obj.restaurant.id,
                             name: obj.restaurant.name,
                             url: obj.restaurant.url,
-                            thumb: obj.restaurant.name,
+                            thumb: obj.restaurant.thumb,
                         }
                         filteredData.push(dataObj)
                     });
-                    res.status(200).json(composeMessage(filteredData))
+                    res.status(200).json(composeMessage(filteredData,code))
                 })
                 .catch(err=>{
                     next(err)
@@ -50,22 +48,35 @@ class MessageController {
             case "photo": {
                 thirdPartyHelper(code, null, req.file.cloudStoragePublicUrl)
                 .then(data=>{
-                    res.status(200).json(composeMessage(data, req.file.cloudStoragePublicUrl))
+                    res.status(200).json(composeMessage(data, code,req.file.cloudStoragePublicUrl))
                 })
                 .catch(err=>{
                     next(err)
                 })
                 break;
             }
+            default : {
+                // console.log("code", code)
+                console.log("default")
+               if(req.body.relationshipPoint){
+                   console.log("relationshi")
+                   res.status(200).json(composeMessage(undefined,undefined,undefined,req.body.relationshipPoint))
+               }else{
+                console.log("code indvalid")
+                   next(new Error("Code is invalid"));
+               }
+            }
         }
     }
 }
 
-function composeMessage(data, imageUrl){
+function composeMessage(data, code, imageUrl, relationshipPoint){
     return{
         message : "success",
+        code,
         data,
-        imageUrl
+        imageUrl,
+        relationshipPoint
     }
 }
 
