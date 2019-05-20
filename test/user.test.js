@@ -13,7 +13,7 @@ describe("User tests", function () {
         User
           .deleteMany({
               _id:{
-                  $nin: ["5cde8a90d3f5935b75012395" ]
+                  $nin: ["5ce29f01adb77d52a6740f76" ]
               }
           })
           .then(function() {
@@ -28,7 +28,7 @@ describe("User tests", function () {
         User
           .deleteMany({
               _id:{
-                  $nin: ["5cde8a90d3f5935b75012395" ]
+                  $nin: ["5ce29f01adb77d52a6740f76" ]
               }
           })
           .then(function() {
