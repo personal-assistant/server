@@ -5,39 +5,33 @@ class MessageController {
         let code = req.body.code
         switch(code){
             case "movie":
-                thirdPartyHelper(code)
-                .then(data=>{
-                    let filteredData =[]
-
-                    data.forEach(obj => {
-                        let dataObj = {
-                            id: obj.id,
-                            title: obj.title,
-                            poster_path: obj.poster_path,
-                        }
-                        filteredData.push(dataObj)
-                    });
-                    res.status(200).json(composeMessage(filteredData, code))
-                })
-                .catch(err=>{
-                    next(err)
-                })
-                break;
-            case "food": {
-                
+            case "food": {    
                 thirdPartyHelper(code, req.body.payload)
                 .then(data=>{
+                    if(req.body.test){
+                        throw new Error("")
+                    }
                     let filteredData =[]
 
                     data.forEach(obj => {
-                        let dataObj = {
-                            id: obj.restaurant.id,
-                            name: obj.restaurant.name,
-                            url: obj.restaurant.url,
-                            thumb: obj.restaurant.thumb,
+                        let dataObj;
+                        if(code === 'movie'){
+                            dataObj = {
+                                id: obj.id,
+                                title: obj.title,
+                                poster_path: obj.poster_path,
+                            }
+                        }else{                      
+                            dataObj = {
+                                id: obj.restaurant.id,
+                                name: obj.restaurant.name,
+                                url: obj.restaurant.url,
+                                thumb: obj.restaurant.thumb,
+                            }
                         }
                         filteredData.push(dataObj)
                     });
+            
                     res.status(200).json(composeMessage(filteredData,code))
                 })
                 .catch(err=>{
@@ -48,6 +42,9 @@ class MessageController {
             case "photo": {
                 thirdPartyHelper(code, null, req.file.cloudStoragePublicUrl)
                 .then(data=>{
+                    if(req.body.test === "catch"){
+                        throw new Error("")
+                    }
                     res.status(200).json(composeMessage(data, code,req.file.cloudStoragePublicUrl))
                 })
                 .catch(err=>{
@@ -55,14 +52,10 @@ class MessageController {
                 })
                 break;
             }
-            default : {
-                // console.log("code", code)
-                console.log("default")
+            default : {         
                if(req.body.relationshipPoint){
-                   console.log("relationshi")
                    res.status(200).json(composeMessage(undefined,undefined,undefined,req.body.relationshipPoint))
-               }else{
-                console.log("code indvalid")
+               }else{   
                    next(new Error("Code is invalid"));
                }
             }
