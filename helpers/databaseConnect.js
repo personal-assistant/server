@@ -5,7 +5,7 @@ module.exports = async function(mongoose,user,password, environment){
         environment = 'development'
     }
     try{
-        await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0-xigat.gcp.mongodb.net/eve-${environment}?retryWrites=true`, {useNewUrlParser:true})
+        await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0-xigat.gcp.mongodb.net/eve-${environment}?retryWrites=true`, {useNewUrlParser:true, useFindAndModify: false})
         return true
         
     }catch(err){
