@@ -53,7 +53,7 @@ class MessageController {
                 break;
             }
             default : {         
-               if(req.body.relationshipPoint){
+               if(req.relationshipPoint>=0){
                    res.status(200).json(composeMessage(undefined,undefined,undefined,req.body.relationshipPoint))
                }else{   
                    next(new Error("Code is invalid"));
