@@ -58,9 +58,12 @@ class UserController{
         if(!req.body.relationshipPoint){
             next()
         }else{
-            User.findByIdAndUpdate(req.user._id, {relationshipPoint: req.user.relationshipPoint + Number(req.body.relationshipPoint)}, {new:true})
+            let newPoint = req.user.relationshipPoint + Number(req.body.relationshipPoint)
+            if(newPoint < 0) newPoint = 0;
+            if(newPoint > 100) newPoint = 100;
+            User.findByIdAndUpdate(req.user._id, {relationshipPoint: newPoint}, {new:true})
             .then(result=>{
-                req.body.relationshipPoint = result.relationshipPoint
+                req.relationshipPoint = result.relationshipPoint
                 next()
             })
             .catch(err=>{

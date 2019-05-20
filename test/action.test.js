@@ -188,23 +188,6 @@ describe('Action Test', function() {
           done();
       })
     })
-    // it("should error code 500", function(done){
-    //   chai
-    //   .request(app)
-    //   .post("/action")
-    //   .set({authorization: token})
-    //   .attach("photo", file, "rendang.jpg")
-    //   .field("code", "photo")
-    //   .field("test", "stream")
-    //   .end(function(err,res){
-    //     console.log(res.body)
-    //       expect(err).to.be.null;
-    //       expect(res).to.have.status(500);
-    //       expect(res.body).to.be.an("object")
-    //       expect(res.body).to.have.all.keys('error','message',"source","statusCode");   
-    //       done();
-    //   })
-    // })
 
   })
   describe("relationship Poin action", function(){
@@ -222,6 +205,50 @@ describe('Action Test', function() {
       .set('authorization', token)
       .send(body)
       .end(function(err,res){
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.an("object")
+          expect(res.body).to.have.keys(['relationshipPoint',"message"]);
+          expect(res.body.message).to.equal('success');  
+          done();
+      })
+    })
+    it("should success update user result point 200", function(done){
+
+      let body = {
+        relationshipPoint : 102
+      }
+
+      chai
+      .request(app)
+      .post("/action")
+      .set('content-type', 'application/json')
+      .set('authorization', token)
+      .send(body)
+      .end(function(err,res){
+        
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.an("object")
+          expect(res.body).to.have.keys(['relationshipPoint',"message"]);
+          expect(res.body.message).to.equal('success');  
+          done();
+      })
+    })
+    it("should success update user result point -200", function(done){
+
+      let body = {
+        relationshipPoint : -200
+      }
+
+      chai
+      .request(app)
+      .post("/action")
+      .set('content-type', 'application/json')
+      .set('authorization', token)
+      .send(body)
+      .end(function(err,res){
+        console.log(res.body)
           expect(err).to.be.null;
           expect(res).to.have.status(200);
           expect(res.body).to.be.an("object")
