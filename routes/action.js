@@ -13,7 +13,3 @@ routes.post("/",
     )
 
 module.exports = routes
-
-// routes.post('/', imgUpload.multer.single('photo'), imgUpload.sendUploadToGCS, async (req, res) => {
-
-//   })

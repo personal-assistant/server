@@ -21,19 +21,25 @@ const sendUploadToGCS = (req, res, next) => {
   const gcsname = Date.now() + req.file.originalname
   const file = bucket.file(gcsname);
 
-  const stream = file.createWriteStream({
+  let stream = file.createWriteStream({
     metadata: {
       contentType: req.file.mimetype,
     },
     resumable: false
   })
+  // if(req.body.test === 'stream'){
+  //   console.log("mana")
+  //   stream.emit('error', new Error('Expected Test Error'));
+  // }
 
-  stream.on('error', (err) => {
-    req.file.cloudStorageError = err
-    next(err)
-  })
+  // stream.on('error', (err) => {
+  //   console.log("masuk")
+  //   req.file.cloudStorageError = err
+  //   next(err)
+  // })
 
   stream.on('finish', () => {
+    // console.log("duluan")
     req.file.cloudStorageObject = gcsname
     file.makePublic().then(() => {
       req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);

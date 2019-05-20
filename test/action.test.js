@@ -55,6 +55,27 @@ describe('Action Test', function() {
           done();
       })
     })
+    it("should error code 500", function(done){
+
+      let body = {
+        code:"movie",
+        test: true
+      }
+
+      chai
+      .request(app)
+      .post("/action")
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .set('authorization', token)
+      .send(body)
+      .end(function(err,res){
+          expect(err).to.be.null;
+          expect(res).to.have.status(500);
+          expect(res.body).to.be.an("object")
+          expect(res.body).to.have.all.keys('error','message',"source","statusCode");   
+          done();
+      })
+    })
   })
   describe("Food action", function(){
     it("should get result with code 200", function(done){
@@ -131,6 +152,7 @@ describe('Action Test', function() {
   })
   describe("photo action", function(){
     let file = readFileSync("./test/rendang.jpg")
+    // let fileDummy = readFileSync("./test/rendangs.jpg")
     it("should get result with code 200", function(done){
       
       chai
@@ -150,6 +172,40 @@ describe('Action Test', function() {
           done();
       })
     })
+    it("should error code 500", function(done){
+      chai
+      .request(app)
+      .post("/action")
+      .set({authorization: token})
+      .attach("photo", file, "rendang.jpg")
+      .field("code", "photo")
+      .field("test", "catch")
+      .end(function(err,res){
+          expect(err).to.be.null;
+          expect(res).to.have.status(500);
+          expect(res.body).to.be.an("object")
+          expect(res.body).to.have.all.keys('error','message',"source","statusCode");   
+          done();
+      })
+    })
+    // it("should error code 500", function(done){
+    //   chai
+    //   .request(app)
+    //   .post("/action")
+    //   .set({authorization: token})
+    //   .attach("photo", file, "rendang.jpg")
+    //   .field("code", "photo")
+    //   .field("test", "stream")
+    //   .end(function(err,res){
+    //     console.log(res.body)
+    //       expect(err).to.be.null;
+    //       expect(res).to.have.status(500);
+    //       expect(res.body).to.be.an("object")
+    //       expect(res.body).to.have.all.keys('error','message',"source","statusCode");   
+    //       done();
+    //   })
+    // })
+
   })
   describe("relationship Poin action", function(){
 
