@@ -71,6 +71,10 @@ class UserController{
             })
         }
     }
+    static getUser(req,res,next){
+        let token = req.headers.authorization
+        res.status(200).json(composeReturn(token, req.user))
+    }
 }
 
 function composeReturn(token,result){
