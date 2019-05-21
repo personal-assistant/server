@@ -1,0 +1,5 @@
+node_modules
+.env
+.nyc_output
+keyfile.json
+visionkey.json
