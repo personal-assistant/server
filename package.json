@@ -23,6 +23,7 @@
     "@google-cloud/vision": "^1.0.0",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
+    "chai-spies": "^1.0.0",
     "cors": "^2.8.5",
     "cron": "^1.7.1",
     "express": "^4.17.0",

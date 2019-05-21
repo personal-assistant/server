@@ -3,58 +3,59 @@ const thirdPartyHelper = require("../helpers/thirdPartyHelpers")
 class MessageController {
     static handleRequest(req,res,next){
         let code = req.body.code
+        let url = req.file ? req.file.cloudStoragePublicUrl : undefined
         switch(code){
             case "movie":
-            case "food": {    
-                thirdPartyHelper(code, req.body.payload)
+            case "food":
+            case "photo": {    
+                thirdPartyHelper(code, req.body.payload, url)
                 .then(data=>{
-                    if(req.body.test){
-                        throw new Error("")
-                    }
                     let filteredData =[]
 
-                    data.forEach(obj => {
-                        let dataObj;
-                        if(code === 'movie'){
-                            dataObj = {
-                                id: obj.id,
-                                title: obj.title,
-                                poster_path: obj.poster_path,
+                    if(code === 'photo'){
+                        filteredData = data
+                    }else{
+                        data.forEach(obj => {
+                            let dataObj;
+                            if(code === 'movie'){
+                                dataObj = {
+                                    id: obj.id,
+                                    title: obj.title,
+                                    poster_path: obj.poster_path,
+                                }
+                            }else{                      
+                                dataObj = {
+                                    id: obj.restaurant.id,
+                                    name: obj.restaurant.name,
+                                    url: obj.restaurant.url,
+                                    thumb: obj.restaurant.thumb,
+                                }
                             }
-                        }else{                      
-                            dataObj = {
-                                id: obj.restaurant.id,
-                                name: obj.restaurant.name,
-                                url: obj.restaurant.url,
-                                thumb: obj.restaurant.thumb,
-                            }
-                        }
-                        filteredData.push(dataObj)
-                    });
-            
-                    res.status(200).json(composeMessage(filteredData,code))
-                })
-                .catch(err=>{
-                    next(err)
-                })
-                break;
-            }
-            case "photo": {
-                thirdPartyHelper(code, null, req.file.cloudStoragePublicUrl)
-                .then(data=>{
-                    if(req.body.test === "catch"){
-                        throw new Error("")
+                            filteredData.push(dataObj)
+                        });
                     }
-                    res.status(200).json(composeMessage(data, code,req.file.cloudStoragePublicUrl))
+                   
+            
+                    res.status(200).json(composeMessage(filteredData,code, url))
                 })
                 .catch(err=>{
                     next(err)
                 })
                 break;
             }
+            // case "photo": {
+            //     thirdPartyHelper(code, null, req.file.cloudStoragePublicUrl)
+            //     .then(data=>{
+            //         res.status(200).json(composeMessage(data, code,req.file.cloudStoragePublicUrl))
+            //     })
+            //     .catch(err=>{
+            //         next(err)
+            //     })
+            //     break;
+            // }
             default : {         
                if(req.relationshipPoint>=0){
-                   res.status(200).json(composeMessage(undefined,undefined,undefined,req.body.relationshipPoint))
+                   res.status(200).json(composeMessage(undefined,undefined,undefined,req.relationshipPoint))
                }else{   
                    next(new Error("Code is invalid"));
                }

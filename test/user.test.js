@@ -190,6 +190,22 @@ describe("User tests", function () {
     });
     describe('Other test', function(){
         this.timeout(10000)
+        it("should success get user", function(done){
+            chai
+            .request(app)
+            .get("/users/user")
+            .set('authorization', token)
+            .end(function(err,res){
+                expect(err).to.be.null;
+                expect(res).to.have.status(200);
+                expect(res.body).to.be.an("object")
+                expect(res.body).to.have.keys(['token','user']);
+                expect(res.body.user).to.have.keys(['_id','name', "email", "password", "expoNotificationToken", "relationshipPoint"]);
+                token = res.body.token
+                done();
+            })
+            
+        })
       it("should error", function(done){
         let user = {
             email: "test@email.com",
